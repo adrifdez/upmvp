@@ -1,7 +1,7 @@
 {
-  "name": "guideline-agent",
+  "name": "mid-home-rentals",
   "version": "1.0.0",
-  "description": "Guideline-Aware AI Agent MVP inspired by Parlant.io",
+  "description": "MidHome Rentals",
   "main": "dist/server.js",
   "type": "module",
   "scripts": {
@@ -15,19 +15,9 @@
     "setup": "bash scripts/setup-db.sh",
     "db:reset": "npx supabase db reset",
     "db:seed": "docker exec -i supabase_db_upmvp psql -U postgres < supabase/seed.sql",
-    "seed:guidelines": "tsx scripts/seed-guidelines.ts",
-    "embeddings": "npx tsx scripts/generate-embeddings.ts",
-    "embeddings:api": "bash scripts/generate-embeddings-curl.sh",
-    "embeddings:simple": "bash scripts/generate-embeddings-simple.sh",
-    "test:pgvector": "node scripts/test-pgvector.js",
-    "test:matching": "tsx scripts/test-guideline-matching.ts",
-    "test:conversations": "node scripts/test-guideline-matching.js",
-    "test:single": "node scripts/test-guideline-matching.js",
-    "check:keys": "node scripts/check-api-keys.js",
     "supabase:start": "npx supabase start",
     "supabase:stop": "npx supabase stop",
-    "supabase:status": "npx supabase status",
-    "verify": "bash scripts/verify-setup.sh"
+    "supabase:status": "npx supabase status"
   },
   "keywords": [
     "ai",
@@ -35,7 +25,7 @@
     "hono",
     "supabase"
   ],
-  "author": "",
+  "author": "MidHome Rentals",
   "license": "ISC",
   "dependencies": {
     "@hono/node-server": "^1.16.0",
