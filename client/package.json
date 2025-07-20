@@ -1,0 +1,24 @@
+{
+  "name": "guideline-agent-frontend",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.11",
+    "daisyui": "^5.0.46",
+    "lucide-react": "^0.525.0",
+    "preact": "^10.19.3",
+    "tailwindcss": "^4.1.11"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.8.1",
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.11"
+  }
+}

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embeddings Admin</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .status {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .status-item {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        .status-item strong {
+            display: block;
+            color: #666;
+            font-size: 0.9em;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .test-form {
+            margin: 20px 0;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .results {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        .error {
+            background: #fee;
+            color: #c00;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success {
+            background: #efe;
+            color: #060;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <h1>Embeddings Admin Panel</h1>
+    
+    <div class="container">
+        <h2>System Status</h2>
+        <div id="status" class="loading">Loading status...</div>
+    </div>
+
+    <div class="container">
+        <h2>Generate Embeddings</h2>
+        <p>Generate vector embeddings for all guidelines without embeddings.</p>
+        <button onclick="generateEmbeddings()" id="generateBtn">Generate All Embeddings</button>
+        <div id="generateResult"></div>
+    </div>
+
+    <script>
+        const API_BASE = '/api/embeddings';
+
+        async function loadStatus() {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = '<div class="loading">Loading...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/status`);
+                const data = await response.json();
+                console.log(data)
+                if (response.ok) {
+                    statusDiv.innerHTML = `
+                        <div class="status">
+                            <div class="status-item">
+                                <strong>OpenAI Configured</strong>
+                                ${data.openai_configured ? '✅ Yes' : '❌ No'}
+                            </div>
+                            <div class="status-item">
+                                <strong>Vector Search</strong>
+                                ${data.vector_search_enabled ? '✅ Enabled' : '❌ Disabled'}
+                            </div>
+                            <div class="status-item">
+                                <strong>Total Guidelines</strong>
+                                ${data.guidelines.total}
+                            </div>
+                            <div class="status-item">
+                                <strong>With Embeddings</strong>
+                                ${data.guidelines.with_embeddings} / ${data.guidelines.total}
+                            </div>
+                            <div class="status-item">
+                                <strong>Missing Embeddings</strong>
+                                ${data.guidelines.missing_embeddings}
+                            </div>
+                            <div class="status-item">
+                                <strong>Cached Messages</strong>
+                                ${data.message_cache.total}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    statusDiv.innerHTML = `<div class="error">Error: ${data.error || 'Failed to load status'}</div>`;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="error">Network error: ${error.message}</div>`;
+            }
+        }
+
+        async function generateEmbeddings() {
+            const btn = document.getElementById('generateBtn');
+            const resultDiv = document.getElementById('generateResult');
+            
+            btn.disabled = true;
+            resultDiv.innerHTML = '<div class="loading">Generating embeddings... This may take a few moments.</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await response.json();
+                console.log(data)
+                if (response.ok) {
+                    resultDiv.innerHTML = `<div class="success">${data.message} - ${data.guidelines_with_embeddings} guidelines now have embeddings.</div>`;
+                    loadStatus(); // Refresh status
+                } else {
+                    resultDiv.innerHTML = `<div class="error">Error: ${data.error || 'Failed to generate embeddings'}<br>${data.details || ''}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">Network error: ${error.message}</div>`;
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        
+        // Load status on page load
+        loadStatus();
+    </script>
+</body>
+</html>

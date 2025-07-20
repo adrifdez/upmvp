@@ -1,0 +1,57 @@
+{
+  "name": "guideline-agent",
+  "version": "1.0.0",
+  "description": "Guideline-Aware AI Agent MVP inspired by Parlant.io",
+  "main": "dist/server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "dev:client": "cd client && npm run dev",
+    "build": "npm run build:server && npm run build:client",
+    "build:server": "tsc",
+    "build:client": "cd client && npm run build",
+    "start": "NODE_ENV=production node dist/server.js",
+    "typecheck": "tsc --noEmit && cd client && npm run typecheck",
+    "setup": "bash scripts/setup-db.sh",
+    "db:reset": "npx supabase db reset",
+    "db:seed": "docker exec -i supabase_db_upmvp psql -U postgres < supabase/seed.sql",
+    "seed:guidelines": "tsx scripts/seed-guidelines.ts",
+    "embeddings": "npx tsx scripts/generate-embeddings.ts",
+    "embeddings:api": "bash scripts/generate-embeddings-curl.sh",
+    "embeddings:simple": "bash scripts/generate-embeddings-simple.sh",
+    "test:pgvector": "node scripts/test-pgvector.js",
+    "test:matching": "tsx scripts/test-guideline-matching.ts",
+    "test:conversations": "node scripts/test-guideline-matching.js",
+    "test:single": "node scripts/test-guideline-matching.js",
+    "check:keys": "node scripts/check-api-keys.js",
+    "supabase:start": "npx supabase start",
+    "supabase:stop": "npx supabase stop",
+    "supabase:status": "npx supabase status",
+    "verify": "bash scripts/verify-setup.sh"
+  },
+  "keywords": [
+    "ai",
+    "guidelines",
+    "hono",
+    "supabase"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@hono/node-server": "^1.16.0",
+    "@supabase/supabase-js": "^2.52.0",
+    "@types/uuid": "^10.0.0",
+    "chalk": "^5.4.1",
+    "dotenv": "^17.2.0",
+    "hono": "^4.8.5",
+    "openai": "^5.10.1",
+    "uuid": "^11.1.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.14",
+    "supabase": "^2.31.4",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  }
+}
